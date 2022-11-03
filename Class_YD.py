@@ -1,7 +1,7 @@
 import urllib
 import requests
 import configparser
-
+from pprint import pprint
 
 
 class YD:
@@ -29,6 +29,8 @@ class YD:
         response = requests.get(upload_url, headers=headers, params=params)
         if response.status_code != 200:
             print(f'Ошибка резервирования. {response.status_code}')
+        if response.status_code == 409:
+            print(f'Указанная папка уже существует. {response.status_code}')
         return response.json()
 
     def upload_link(self, disk_file_path, url):
@@ -41,6 +43,13 @@ class YD:
             print('Загружено успешно.')
         else:
             print('Ошибка загрузки на Яндекс Диск.')
+
+    def get_json(self):
+        url = 'https://cloud-api.yandex.net/v1/disk/resources/files'
+        headers = {'Authorization': f'OAuth {self.token}'}
+        params = {'media_type': 'image'}
+        response = requests.get(url, headers=headers, params=params)
+        pprint(response.json())
 
 
 config = configparser.ConfigParser()
